@@ -1,0 +1,9 @@
+{
+  "Group": "RibsPlugins",
+  "Name": "RibsCombatLog",
+  "Version": "1.0.0",
+  "Description": "Prevents combat logging by killing players who disconnect during PVP",
+  "Main": "com.ribeirin.ribscombatlog.RibsCombatLog",
+  "ServerVersion": "*",
+  "Dependencies": {}
+}
