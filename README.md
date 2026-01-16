@@ -1,6 +1,15 @@
 # RibsCombatLog
 RibsCombatLog is a Hytale plugin designed to prevent players from avoiding PvP consequences by disconnecting during combat. When a player leaves the server voluntarily while tagged, they are automatically killed and their items are dropped at their location.
 
+  ## Features
+  - **Combat Tagging** - Players are tagged when they hit or get hit by another player
+  - **Both Players Tagged** - Both attacker and victim are tagged in combat
+  - **Combat Log Punishment** - If a player disconnects while in combat, they are killed and their items are dropped
+  - **Configurable Duration** - Combat tag duration is configurable (default: 15 seconds)
+  - **Combat Enter/Leave Message** - Shows messages when entering pvp and combat tag expires. This are customizable.
+  - **Command Blocking** - Blocks specified commands while in combat (e.g., `/spawn`, `/teleport`, `/warp`)
+  - **Configurable Blocked Commands** - List of blocked commands is configurable in `config.json`
+
 ## Config
 When the plugin starts, it will create the following directory and file: `<dataDirectory>/RibsCombatLog/config.json`. The default value for the duration is 15 seconds.
 
