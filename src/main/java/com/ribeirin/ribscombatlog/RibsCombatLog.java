@@ -2,7 +2,9 @@ package com.ribeirin.ribscombatlog;
 
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
+import com.ribeirin.ribscombatlog.commands.CombatLogCommand;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.logging.Level;
 
@@ -10,6 +12,7 @@ public class RibsCombatLog extends JavaPlugin {
 
     private CombatLogPlugin combatLogPlugin;
     private PluginConfig config;
+    private Path configDir;
 
     public RibsCombatLog(JavaPluginInit init) {
         super(init);
@@ -17,10 +20,10 @@ public class RibsCombatLog extends JavaPlugin {
 
     @Override
     protected void setup() {
-        getLogger().at(Level.INFO).log("[RibsCombatLog]  initializing...");
+        getLogger().at(Level.INFO).log("[RibsCombatLog] initializing");
 
         try {
-            Path configDir = getDataDirectory().resolve("RibsCombatLog");
+            configDir = getDataDirectory().resolve("RibsCombatLog");
             config = PluginConfig.loadOrCreate(configDir);
             getLogger().at(Level.INFO).log("[RibsCombatLog] Config loaded: combatTagDurationSeconds = %d", config.getCombatTagDurationSeconds());
         } catch (Exception e) {
@@ -31,7 +34,19 @@ public class RibsCombatLog extends JavaPlugin {
         combatLogPlugin = new CombatLogPlugin(this, config);
         combatLogPlugin.enable();
 
+        getCommandRegistry().registerCommand(new CombatLogCommand(this));
+
         getLogger().at(Level.INFO).log("[RibsCombatLog] Plugin loaded successfully");
+    }
+
+    public void reloadPlugin() throws IOException {
+        getLogger().at(Level.INFO).log("[RibsCombatLog] Reloading configuration");
+
+        PluginConfig newConfig = PluginConfig.loadOrCreate(configDir);
+        this.config = newConfig;
+        combatLogPlugin.reload(newConfig);
+
+        getLogger().at(Level.INFO).log("[RibsCombatLog] Configuration reloaded successfully");
     }
 
     @Override
