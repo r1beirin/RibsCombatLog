@@ -7,7 +7,16 @@ When the plugin starts, it will create the following directory and file: `<dataD
 ### Default config.json
 ```json
 {
-  "combatTagDurationSeconds": 15
+  "combatTagDurationSeconds": 15,
+  "combatEnterMessage": "[RibsCombatLog] You are in pvp",
+  "combatLeaveMessage": "[RibsCombatLog] You are not more in pvp",
+  "commandBlockedMessage": "[RibsCombatLog] You cannot use this command while in combat!",
+  "blockedCommands": [
+    "spawn",
+    "teleport",
+    "warp",
+    "home"
+  ]
 }
 ```
 
@@ -23,3 +32,17 @@ mvn clean package -DskipTests
 1. Locate the generated .jar file in the `target/` directory.
 2. Copy the .jar file and paste it into the `mods/` folder of your Hytale server.
 3. Restart the server to load the plugin.
+
+## Changelog
+### v1.0.0
+* Plugin created with following drops: hotbar, storage, armor and backpack.
+* Configuration file was created.
+
+### v1.0.1
+* Add enter/leave combat messages to notify players of combat status
+* Add command blocking system to prevent teleport commands during combat
+* Add configurable blocked commands list (spawn, teleport, warp, home)
+* Add /rcombatlog reload command to reload configuration
+* Add /rcombatlog status command to view current settings
+* Tag both attacker and victim when PvP damage occurs
+* Delay command wrapping until AllWorldsLoadedEvent for proper plugin load order
