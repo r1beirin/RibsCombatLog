@@ -3,7 +3,7 @@ RibsCombatLog is a Hytale plugin designed to prevent players from avoiding PvP c
 
   ## Features
   - **Combat Tagging** - Players are tagged when they hit or get hit by another player.
-  - **Essentials Plugins Compatibility** - Prevents other plugins (like HyCommands) from overwriting blocked commands, ensuring they remain restricted during combat.
+  - **Essentials Plugins Compatibility** - Prevents other plugins (like HyCommands or others essentials plugins) from overwriting blocked commands, ensuring they remain restricted during combat.
   - **Both Players Tagged** - Both attacker and victim are tagged in combat.
   - **Combat Log Punishment** - If a player disconnects while in combat, they are killed and their items are dropped.
   - **Configurable Duration** - Combat tag duration is configurable (default: 15 seconds).
