@@ -7,7 +7,7 @@
 
     <groupId>com.ribeirin</groupId>
     <artifactId>RibsCombatLog</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -20,7 +20,7 @@
         <dependency>
             <groupId>com.hypixel.hytale</groupId>
             <artifactId>hytale-server</artifactId>
-            <version>1.0.0</version>
+            <version>2026.01.17-4b0f30090</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/libs/HytaleServer.jar</systemPath>
         </dependency>

@@ -113,6 +113,18 @@ public class CombatLogPlugin {
         main.getEventRegistry().registerGlobal(AllWorldsLoadedEvent.class, event -> {
             main.getLogger().at(Level.INFO).log("[RibsCombatLog] All worlds loaded, wrapping blocked commands...");
             wrapBlockedCommands();
+
+            // schedule a re-check to ensure we overwrite any late-loading plugins (like essentials/HyCommands)
+            // this is crucial if other plugins load/register commands after this event
+            combatCheckScheduler.schedule(() -> {
+                main.getLogger().at(Level.INFO).log("[RibsCombatLog] Re-checking blocked commands...");
+                wrapBlockedCommands();
+            }, 5, TimeUnit.SECONDS);
+            
+            combatCheckScheduler.schedule(() -> {
+                main.getLogger().at(Level.INFO).log("[RibsCombatLog] Final check for blocked commands...");
+                wrapBlockedCommands();
+            }, 10, TimeUnit.SECONDS);
         });
 
         main.getLogger().at(Level.INFO).log("[RibsCombatLog] Plugin enabled. Combat tag duration: %d seconds",
@@ -135,29 +147,34 @@ public class CombatLogPlugin {
         for (String blockedCommandName : config.getBlockedCommands()) {
             String commandName = blockedCommandName.toLowerCase();
 
-            // skip if already wrapped
-            if (wrappedCommandRegistrations.containsKey(commandName)) {
-                main.getLogger().at(Level.INFO).log("[RibsCombatLog] Command already wrapped: /%s", commandName);
+            // check what is currently registered for this name
+            AbstractCommand currentCommand = registeredCommands.get(commandName);
+
+            if (currentCommand == null) {
+                // Command not found, nothing to wrap
                 continue;
             }
 
-            AbstractCommand originalCommand = registeredCommands.get(commandName);
+            // if the current command is ALREADY a CombatAwareCommand, we assume it's ours and skip
+            if (currentCommand instanceof CombatAwareCommand) {
+                continue;
+            }
 
-            if (originalCommand != null) {
-                // save the original command for restoration during reload/disable
-                originalCommands.put(commandName, originalCommand);
+            // if we are here, the command is NOT wrapped (or was overwritten by another plugin)
+            main.getLogger().at(Level.INFO).log("[RibsCombatLog] Wrapping command: /%s (Original: %s)", 
+                commandName, currentCommand.getClass().getSimpleName());
 
-                // create a combat-aware wrapper for this command
-                CombatAwareCommand wrappedCommand = new CombatAwareCommand(originalCommand, this, config);
+            // save the original command for restoration during reload/disable
+            // we overwrite any previous entry because the server state has changed
+            originalCommands.put(commandName, currentCommand);
 
-                // register the wrapped command (this replaces the original)
-                CommandRegistration registration = commandManager.register(wrappedCommand);
-                if (registration != null) {
-                    wrappedCommandRegistrations.put(commandName, registration);
-                    main.getLogger().at(Level.INFO).log("[RibsCombatLog] Wrapped command: /%s", commandName);
-                }
-            } else {
-                main.getLogger().at(Level.WARNING).log("[RibsCombatLog] Command not found to wrap: /%s", commandName);
+            CombatAwareCommand wrappedCommand = new CombatAwareCommand(currentCommand, this, config);
+
+            // register the wrapped command (this replaces the original)
+            CommandRegistration registration = commandManager.register(wrappedCommand);
+            if (registration != null) {
+                wrappedCommandRegistrations.put(commandName, registration);
+                main.getLogger().at(Level.INFO).log("[RibsCombatLog] Successfully wrapped command: /%s", commandName);
             }
         }
     }
